@@ -7,7 +7,10 @@ syndrome measurement circuits, and decoding matrices for a particular quantum co
 This computation can take a few minutes per code. All code data is saved to disk.
 One has to call decoder_setup.py only once for each combination (code, error rate, number of syndrome cycles). 
 
-decoder_run.py is the online part of the decoder that simulates error correction circuits. 
+decoder_run.py is the online part of the decoder that simulates error correction circuits. It relies on the software implementation of the Belief Propagation with the Ordered Statistics Decoder due to 
+Joschka Roffe
+"LDPC: Python tools for low density parity check codes"
+https://pypi.org/project/ldpc/
 
 File naming: the working directory that contains  decoder_setup.py and decoder_run.py must contain folders "TMP" and "CODE_n_k_d" for each code [[n,k,d]] to be simulated. Initially these folders are empty. Folder "TMP" stores code data files with
 check matrices, syndrome measurement circuits, and decoding matrices. There is a separate data file for each combination (code, error rate, number of syndrome cycles). Create code data files using decoder_setup.py. Folder "CODE_n_k_d" contains a file "result" that stores the simulation results. Each line in the "result" file has four columns:
