@@ -20,6 +20,8 @@ column 3: number of Monte Carlo trials,
 column 4: number of failed trials that resulted in a logical error.
 Each trial runs the noisy error correction circuit followed by a noiseless syndrome measurement of all stabilizers, decoding, and error correction. A trial is failed if error correction results in a non-identity logical Pauli error. Create "result" files using decoder_run.py
 
+distance_test.py calculates the distance of a BB code by solving an integer linear program
+
 
 [BCGMRY]
 Sergey Bravyi, Andrew Cross, Jay Gambetta, Dmitri Maslov, Patrick Rall, Theodore Yoder,
