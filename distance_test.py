@@ -83,11 +83,14 @@ lx = qcode.lx
 k = lz.shape[0]
 
 print('Computing code distance...')
-# we compute distance only for Z-type logical operators (the distance for X-type logical operators is the same)
+# We compute the distance only for Z-type logical operators (the distance for X-type logical operators is the same)
+# A minimum weight logical-Z overlaps with each X-check on 0 or 2 qubits (since each X-check has weight-6)
+# and overlaps with the logical-X operator on at least one logical qubit on odd number of qubits
+# For each logical qubit i=1,...,k solve a mixed integer linear program to compute minimum weight of such logical-Z operator
 d = n
 for i in range(k):
 	wt = distance_test(hx,lx[i,:])
-	print('Distance test for the',i,'-th logical: min weight=',wt)
+	print('Logical qubit=',i,'Distance=',wt)
 	d = min(d,wt)
 
-print('Code parameters: n,k,d=',n,k,dmin)
+print('Code parameters: n,k,d=',n,k,d)
