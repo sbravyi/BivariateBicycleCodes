@@ -12,35 +12,48 @@ def distance_test(stab,logicOp):
 	# number of stabilizers
 	m = stab.shape[0]
 
-	# we assume that each stabilizer has weight 6
-	for i in range(m):
-		assert(np.count_nonzero(stab[i,:])==6)
-	# Then a minimum weight logical operator overlaps with each stabilizer on 0 or 2 qubits
-
+	# maximum stabilizer weight
+	wstab = np.max([np.sum(stab[i,:]) for i in range(m)])
 	# weight of the logical operator
 	wlog = np.count_nonzero(logicOp)
-	# how many slack variables are needed to express anti-commutation with logicOp
-	num_slack = int(np.ceil(np.log2(wlog)))
+	# how many slack variables are needed to express orthogonality constraints modulo two
+	num_anc_stab = int(np.ceil(np.log2(wstab)))
+	num_anc_logical = int(np.ceil(np.log2(wlog)))
+	# total number of variables
+	num_var = n + m*num_anc_stab + num_anc_logical
 
 	model = Model()
 	model.verbose = 0
-	# total number of variables
-	num_var = n + n2 + num_slack 
-	# first n variables parameterize a logical operator
-	# next n2 variables are slack variables to express commutation with stabilizers 
-	# last num_slack variables are slack variables to express anti-commutation with logicOp
 	x = [model.add_var(var_type=BINARY) for i in range(num_var)]
 	model.objective = minimize(xsum(x[i] for i in range(n)))
 
-	# commutation with stabilizers
-	for i in range(n2):
-		model+= xsum([x[j] for j in range(n) if stab[i,j]==1]) == 2*x[n+i]
+	# orthogonality to rows of stab constraints
+	for row in range(m):
+		weight = [0]*num_var
+		supp = np.nonzero(stab[row,:])[0]
+		for q in supp:
+			weight[q] = 1
+		cnt = 1
+		for q in range(num_anc_stab):
+			weight[n + row*num_anc_stab +q] = -(1<<cnt)
+			cnt+=1
+		model+= xsum(weight[i] * x[i] for i in range(num_var)) == 0
 
-	# anti-commutation with logicOp
-	model+= xsum([x[j] for j in range(n) if logicOp[j]==1]) == (1 + xsum([x[-j]*(1<<(j+1)) for j in range(num_slack)])) 
+	# odd overlap with logicOp constraint
+	supp = np.nonzero(logicOp)[0]
+	weight = [0]*num_var
+	for q in supp:
+		weight[q] = 1
+	cnt = 1
+	for q in range(num_anc_logical):
+			weight[n + m*num_anc_stab +q] = -(1<<cnt)
+			cnt+=1
+	model+= xsum(weight[i] * x[i] for i in range(num_var)) == 1
 
 	model.optimize()
-	return sum([x[i].x for i in range(n)])
+
+	opt_val = sum([x[i].x for i in range(n)])
+	return int(opt_val)
 
 
 
