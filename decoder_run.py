@@ -193,6 +193,8 @@ def generate_noisy_circuit(p):
 	return circ
 
 
+
+
 # we only look at the action of the circuit on Z errors; 0 means no error, 1 means error
 def simulate_circuitZ(C):
 	syndrome_history = []
@@ -231,6 +233,21 @@ def simulate_circuitZ(C):
 			q = lin_order[gate[1]]
 			state[q] = (state[q] + 1) % 2
 			continue
+
+		if gate[0] in ['ZX', 'YX']:
+			err_cnt+=1
+			assert(len(gate)==3)
+			q = lin_order[gate[1]]
+			state[q] = (state[q] + 1) % 2
+			continue
+
+		if gate[0] in ['XZ','XY']:
+			err_cnt+=1
+			assert(len(gate)==3)
+			q = lin_order[gate[2]]
+			state[q] = (state[q] + 1) % 2
+			continue
+
 		if gate[0] in ['ZZ','YY','YZ','ZY']:
 			err_cnt+=1
 			assert(len(gate)==3)
@@ -280,6 +297,21 @@ def simulate_circuitX(C):
 			q = lin_order[gate[1]]
 			state[q] = (state[q] + 1) % 2
 			continue
+
+		if gate[0] in ['XZ', 'YZ']:
+			err_cnt+=1
+			assert(len(gate)==3)
+			q = lin_order[gate[1]]
+			state[q] = (state[q] + 1) % 2
+			continue
+
+		if gate[0] in ['ZX','ZY']:
+			err_cnt+=1
+			assert(len(gate)==3)
+			q = lin_order[gate[2]]
+			state[q] = (state[q] + 1) % 2
+			continue
+
 		if gate[0] in ['XX','YY','XY','YX']:
 			err_cnt+=1
 			assert(len(gate)==3)
@@ -289,6 +321,7 @@ def simulate_circuitX(C):
 			state[q2] = (state[q2] + 1) % 2
 			continue
 	return np.array(syndrome_history,dtype=int),state,syndrome_map,err_cnt
+
 
 
 
