@@ -1,6 +1,6 @@
 # Simulation software used to generate data reported on Figure 3 of [BCGMRY]
 
-## The simulation software consists of two python scripts:
+## The simulation software consists of two python scripts
 
 * `decoder_setup.py` is the offline part of the decoder that constructs check matrices,
 syndrome measurement circuits, and decoding matrices for a particular quantum code.
