@@ -1,7 +1,7 @@
 # This script assumes Python3.10 or later (replace if needed)
 # The script is creating a virtualenv and installing the packages needed to get the ldpcv1 library working
 
-python3.10 -m venv venvs
+python3.10 -m venv venv
 source venv/bin/activate
 
 pip install cython==0.29.37
